@@ -29,7 +29,7 @@ def ddgs(query):
         bodies.append(result["body"])
     return "\n".join(bodies)
 
-@app.route('/', methods=['GET'])
+@app.route('/chat', methods=['GET'])
 def index():
     # No changes here; serves the main page
     return render_template('index.html')
