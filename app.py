@@ -35,7 +35,7 @@ def index():
     return "Hello World!"
 
 @app.route('/chat', methods=['GET'])
-def index():
+def chat():
     # No changes here; serves the main page
     return render_template('index.html')
 
