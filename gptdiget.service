@@ -1,0 +1,14 @@
+[Unit]
+Description=Gunicorn instance for gpt.sh1.xyz
+After=network.target
+
+[Service]
+User=runner
+Group=runner
+EnvironmentFile=/home/runner/env.txt
+WorkingDirectory=/home/runner/GPTDigest
+ExecStart=/usr/local/bin/gunicorn -w 2 -b 127.0.0.1:5000 --timeout 300 app:app
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
