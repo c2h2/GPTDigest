@@ -1,13 +1,11 @@
 from flask import Flask, render_template, request, jsonify
 from datetime import datetime
-import requests
 from openai import OpenAI
 from duckduckgo_search import DDGS
 import sys
 import os
 
 app = Flask(__name__)
-
 
 try:
   client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
@@ -22,7 +20,6 @@ def ask_gpt(prompt):
     chat_completion = client.chat.completions.create(model=the_model, messages=msg)
     reply = chat_completion.choices[0].message.content
     return reply
-
 
 def ddgs(query):
     bodies=[]
