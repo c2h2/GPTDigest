@@ -13,7 +13,7 @@ except KeyError:
   sys.stderr.write("""\nSet up OPENAI_API_KEY_REPLIT as a secret.\n""")
   sys.exit(1)
 
-the_model = "gpt-3.5-turbo"
+the_model = "gpt-3.5-turbo-0125"
 
 def ask_gpt(prompt):
     msg = [{"role": "user", "content": prompt}]
@@ -24,7 +24,7 @@ def ask_gpt(prompt):
 def ddgs(query):
     bodies=[]
     with DDGS() as ddgs:
-        results = [r for r in ddgs.text(query, max_results=12)]
+        results = [r for r in ddgs.text(query, max_results=20)]
     for result in results:
         bodies.append(result["body"])
     return "\n".join(bodies)
@@ -54,7 +54,7 @@ def generate_message():
     pre_message = "关于以下的内容总结800字，不要提出其他帮助词汇："
     search_result_text = ddgs(topic)
     query = pre_message + "\n" + search_result_text
-    trimmed_query = query[:4000] if len(query) > 400 else query
+    trimmed_query = query[:8000] if len(query) > 8000 else query
     print("GOT DDGS, sending to gpt now.")
 
     gpt_answer = ask_gpt(trimmed_query)
