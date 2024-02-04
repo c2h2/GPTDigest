@@ -5,6 +5,7 @@ from duckduckgo_search import DDGS
 import sys
 import os
 
+
 app = Flask(__name__)
 
 try:
@@ -22,12 +23,13 @@ def ask_gpt(prompt):
     return reply
 
 def ddgs(query):
-    bodies=[]
+    #bodies = []
     with DDGS() as ddgs:
         results = [r for r in ddgs.text(query, max_results=20)]
-    for result in results:
-        bodies.append(result["body"])
-    return "\n".join(bodies)
+    #for result in results:
+    #    bodies.append(result["body"])
+    #return "\n".join(bodies)
+    return results
 
 @app.route('/')
 def index():
@@ -50,15 +52,24 @@ def get_time():
 def generate_message():
     # Extracting the topic from the AJAX request.
     topic = request.json['topic']
-    pre_message = "help me to write a 800 characters summary of the following news."
-    pre_message = "关于以下的内容总结800字，不要提出其他帮助词汇："
-    search_result_text = ddgs(topic)
+    #pre_message = "help me to write a 1000 words summary of the following news snippts."
+    pre_message = "关于以下的内容总结1000字，不要提出其他帮助词汇："
+    search_results = ddgs(topic)
+    search_result_text = "\n".join([result["body"] for result in search_results])
     query = pre_message + "\n" + search_result_text
     trimmed_query = query[:8000] if len(query) > 8000 else query
     print("GOT DDGS, sending to gpt now.")
 
     gpt_answer = ask_gpt(trimmed_query)
     generated_message = str(gpt_answer)
+    #append a log file, log the query and the response
+    fn = "/var/log/gptdigst_query.log"
+    f=open(fn, "a")
+    current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    f.write(f"{current_time} | Query: " + query + "\n")
+    f.write(f"{current_time} | Search Result: " + str(search_results) + "\n")
+    f.write(f"{current_time} | Response: " + generated_message + "\n")
+    
     return jsonify({'message': generated_message})
 
 if __name__ == '__main__':
